@@ -3,8 +3,12 @@ package com.example.yass.wallet.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.example.yass.wallet.R;
+
+import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.wallet.Wallet;
 
 /**
  * Created by yass on 10/2/17.
@@ -17,4 +21,11 @@ public class NewWalletActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_wallet);
     }
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Wallet wallet = new Wallet(MainNetParams.get());
+        }
+    };
 }
