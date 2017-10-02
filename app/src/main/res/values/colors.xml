@@ -6,7 +6,7 @@
     <color name="mainBackground">#008a9a</color>
     <color name="colorWhite">#feffff</color>
     <color name="text">#000000</color>
-    <color name="alertdialog">#00BFA5</color>
+    <color name="alertdialog">#4dac9f</color>
 
     <color name="gray_12_dividers">#1e000000</color>
     <color name="pressed_gray">#b90f0f</color>
@@ -15,4 +15,6 @@
     <color name="colorInactive">#a3a3a3</color>
     <color name="colorText">#ffffff</color>
     <color name="darkgray">#A9A9A9</color>
+
+
 </resources>

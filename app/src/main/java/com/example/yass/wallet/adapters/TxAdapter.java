@@ -41,6 +41,11 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
         transations.add(bdTransaction);
         transations.add(bdTransaction);
         transations.add(bdTransaction);
+        transations.add(bdTransaction);
+        transations.add(bdTransaction);
+        transations.add(bdTransaction);
+        transations.add(bdTransaction);
+        transations.add(bdTransaction);
     }
 
     @Override
