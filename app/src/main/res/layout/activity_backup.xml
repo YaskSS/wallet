@@ -18,11 +18,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#0000"
+            android:gravity="center"
             android:hint="Input your words"
+            android:text="deposit puppy onion quit empty fancy crime toy treat soul orange learn"
             android:textColor="@color/colorPrimary"
             android:textSize="20dp" />
 
         <ProgressBar
+            android:theme="@style/CircularProgress"
             android:id="@+id/progressBar_backup"
             android:layout_width="50dp"
             android:layout_height="50dp"

@@ -1,11 +1,15 @@
 package com.example.yass.wallet.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,12 +17,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yass.wallet.R;
 import com.example.yass.wallet.adapters.TxAdapter;
 import com.example.yass.wallet.data.SharedHelper;
 import com.example.yass.wallet.model.BdTransaction;
+import com.example.yass.wallet.service.UpdateService;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -29,12 +35,18 @@ public class MainActivity extends AppCompatActivity
 
     private RecyclerView recyclerView;
     private TxAdapter txAdapter;
+    private TextView balanceTextView;
+    private TextView title;
+    private SwipeRefreshLayout swipe;
+    private BroadcastReceiver receiver;
+    public final static String BROADCAST_ACTION = "com.example.yass.wallet.activity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -45,10 +57,38 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        txAdapter = new TxAdapter(this, new ArrayList<BdTransaction>());
+        if (SharedHelper.getInstance().getBdTransaction() != null)
+            txAdapter = new TxAdapter(this, SharedHelper.getInstance().getBdTransaction());
         recyclerView = (RecyclerView) findViewById(R.id.transaction);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(txAdapter);
+        balanceTextView = (TextView) findViewById(R.id.balance);
+        balanceTextView.setText(String.format("%.8f", (float) (Double.parseDouble(SharedHelper.getInstance().getTotalBalance()))) + " BTC");
+        title = (TextView) findViewById(R.id.main_title);
+        swipe = (SwipeRefreshLayout) findViewById(R.id.swipe_main);
+        swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipe.setRefreshing(true);
+                Intent intentService = UpdateService.newIntent(getApplicationContext());
+                startService(intentService);
+            }
+        });
+
+
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                swipe.setRefreshing(false);
+                txAdapter = new TxAdapter(getApplicationContext(), SharedHelper.getInstance().getBdTransaction());
+                txAdapter.notifyDataSetChanged();
+                balanceTextView.setText(String.format("%.8f", (float) (Double.parseDouble(SharedHelper.getInstance().getTotalBalance()))) + " BTC");
+            }
+        };
+
+        IntentFilter intFilt = new IntentFilter(BROADCAST_ACTION);
+        registerReceiver(receiver, intFilt);
     }
 
     @Override
@@ -129,12 +169,18 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(this, "invalid_qr_code", Toast.LENGTH_LONG).show();
                 } else {
                     Intent intent = new Intent(this, SendActivity.class);
-                    intent.putExtra("addr",result.getContents() );
+                    intent.putExtra("addr", result.getContents());
                     startActivity(intent);
                 }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+       unregisterReceiver(receiver);
     }
 }

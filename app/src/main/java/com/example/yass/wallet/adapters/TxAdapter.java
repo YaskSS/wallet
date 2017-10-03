@@ -32,7 +32,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
         this.context = context;
         this.transations = transations;
 
-        BdTransaction bdTransaction = new BdTransaction();
+      /*  BdTransaction bdTransaction = new BdTransaction();
         bdTransaction.setAmount("0.00041");
         bdTransaction.setTime("2017/02/10 19.55");
 
@@ -45,7 +45,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
         transations.add(bdTransaction);
         transations.add(bdTransaction);
         transations.add(bdTransaction);
-        transations.add(bdTransaction);
+        transations.add(bdTransaction);*/
     }
 
     @Override
